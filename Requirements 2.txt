@@ -1,0 +1,14 @@
+# MirchiVision AI v3 — Backend Requirements
+# pip install -r requirements.txt
+
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.9
+httpx>=0.27.0
+opencv-python-headless>=4.9.0
+Pillow>=10.2.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+
+# Optional — uncomment to enable CNN model
+# tensorflow>=2.15.0

@@ -1,0 +1,21 @@
+{
+  "name": "MirchiVision AI",
+  "short_name": "MirchiVision",
+  "start_url": "/mirchi_quality_analyzer.html",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#C8361D",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

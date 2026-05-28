@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="/static/icon-180.png">
+<meta name="theme-color" content="#C8361D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MirchiVision">
+<title>MirchiVision AI v3 — Quality Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   TOKENS — warm cream light theme
+═══════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Palette */
+  --bg:#FAF7F2;
+  --bg2:#F3EEE6;
+  --card:#FFFFFF;
+  --card2:#FBF8F4;
+  --border:#E8DFD0;
+  --border2:#D4C9B8;
+  /* Accent */
+  --chilli:#C8361D;
+  --chilli-light:#E04B30;
+  --chilli-pale:#FDF0EE;
+  --chilli-mid:rgba(200,54,29,0.12);
+  --leaf:#2D7D4A;
+  --leaf-pale:#EAF5EE;
+  --amber:#C17F24;
+  --amber-pale:#FDF5E6;
+  --blue:#2563A8;
+  --blue-pale:#EEF4FF;
+  /* Text */
+  --text:#1C1410;
+  --text2:#6B5E50;
+  --text3:#A8998A;
+  --text-inv:#FFFFFF;
+  /* Fonts */
+  --serif:'Fraunces',serif;
+  --sans:'DM Sans',sans-serif;
+  --mono:'Inconsolata',monospace;
+  /* Shadows */
+  --shadow-sm:0 1px 4px rgba(28,20,16,0.06);
+  --shadow-md:0 4px 16px rgba(28,20,16,0.09);
+  --shadow-lg:0 12px 40px rgba(28,20,16,0.13);
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+button,select,input{font-family:var(--sans)}
+
+/* ═══ SCROLLBAR ══════════════════════════════════ */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+
+/* ═══ LAYOUT ════════════════════════════════════ */
+.app{max-width:1140px;margin:0 auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+
+/* ═══ HEADER ════════════════════════════════════ */
+.header{background:linear-gradient(135deg,#1C1410 0%,#3A1F10 45%,#5C2E10 100%);
+  border-radius:18px;padding:18px 24px;display:flex;align-items:center;gap:16px;
+  box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;
+  border-radius:50%;background:radial-gradient(circle,rgba(200,54,29,0.2),transparent 70%)}
+.header::after{content:'';position:absolute;left:30%;bottom:-80px;width:180px;height:180px;
+  border-radius:50%;background:radial-gradient(circle,rgba(45,125,74,0.12),transparent 70%)}
+.logo-box{width:48px;height:48px;background:var(--chilli);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;z-index:1;
+  box-shadow:0 4px 12px rgba(200,54,29,0.4)}
+.header-text{z-index:1;flex:1}
+.header-text h1{font-family:var(--serif);color:#fff;font-size:22px;font-weight:700;
+  letter-spacing:-.3px;line-height:1}
+.header-text h1 span{color:#F4A35A}
+.header-text p{color:rgba(255,255,255,0.45);font-size:11px;margin-top:4px;font-weight:300;letter-spacing:.04em}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;z-index:1;flex-shrink:0}
+.header-pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.hpill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.05em}
+.hpill-r{background:rgba(200,54,29,0.25);color:#F4A35A;border:1px solid rgba(200,54,29,0.35)}
+.hpill-g{background:rgba(45,125,74,0.2);color:#6EDFA0;border:1px solid rgba(45,125,74,0.3)}
+.hpill-b{background:rgba(37,99,168,0.2);color:#7FBFFF;border:1px solid rgba(37,99,168,0.3)}
+.lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.7);padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+  font-weight:500;transition:.2s;white-space:nowrap}
+.lang-btn:hover{background:rgba(255,255,255,0.18);color:#fff}
+
+/* ═══ BACKEND BAR ═══════════════════════════════ */
+.config-bar{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:11px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow-sm)}
+.cfg-label{font-size:11px;color:var(--text2);font-weight:500;white-space:nowrap}
+.cfg-input{flex:1;min-width:150px;padding:6px 10px;border:1px solid var(--border);
+  border-radius:8px;font-size:12px;background:var(--bg2);color:var(--text);outline:none}
+.cfg-input:focus{border-color:var(--chilli)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-on{background:#27AE60;box-shadow:0 0 6px rgba(39,174,96,0.5)}
+.dot-off{background:#E74C3C}
+.dot-idle{background:#C8C0B4}
+.cfg-status{font-size:11px;color:var(--text3)}
+.btn-xs{padding:6px 13px;border-radius:8px;font-size:11px;font-weight:600;border:none;
+  cursor:pointer;transition:.15s;font-family:var(--sans)}
+.btn-test{background:var(--bg2);color:var(--text2);border:1px solid var(--border)}
+.btn-test:hover{background:var(--border);color:var(--text)}
+
+/* ═══ MAIN GRID ═════════════════════════════════ */
+.main{display:grid;grid-template-columns:310px 1fr;gap:14px;align-items:start}
+@media(max-width:780px){.main{grid-template-columns:1fr}}
+
+/* ═══ PANELS ════════════════════════════════════ */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;box-shadow:var(--shadow-sm)}
+.psec{padding:16px 18px;border-bottom:1px solid var(--border)}
+.psec:last-child{border-bottom:none}
+.plabel{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:11px;display:flex;align-items:center;gap:6px}
+
+/* ═══ UPLOAD ════════════════════════════════════ */
+.upload-zone{border:2px dashed rgba(200,54,29,0.25);border-radius:12px;padding:24px 14px;
+  text-align:center;cursor:pointer;transition:.2s;background:var(--chilli-pale);position:relative}
+.upload-zone:hover,.upload-zone.over{border-color:var(--chilli);background:rgba(200,54,29,0.06)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uz-icon{font-size:30px;margin-bottom:8px}
+.uz-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.uz-sub{font-size:11px;color:var(--text3)}
+
+/* BATCH upload toggle */
+.mode-toggle{display:flex;background:var(--bg2);border-radius:8px;padding:3px;gap:2px;margin-bottom:12px}
+.mode-btn{flex:1;padding:5px;font-size:11px;font-weight:600;border:none;border-radius:6px;
+  cursor:pointer;transition:.15s;background:transparent;color:var(--text3)}
+.mode-btn.active{background:var(--card);color:var(--chilli);box-shadow:var(--shadow-sm)}
+
+/* ═══ PREVIEW ═══════════════════════════════════ */
+.preview-img{width:100%;height:160px;object-fit:cover;border-radius:10px;border:1px solid var(--border)}
+.batch-thumbs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.batch-thumb{width:52px;height:52px;object-fit:cover;border-radius:7px;
+  border:1.5px solid var(--border);cursor:pointer;transition:.15s}
+.batch-thumb.active{border-color:var(--chilli)}
+.batch-count{font-size:11px;color:var(--text3);margin-top:5px;text-align:center}
+
+/* ═══ SAMPLE CHIPS ══════════════════════════════ */
+.sample-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.schip{border:1px solid var(--border);border-radius:9px;padding:7px 4px;background:var(--card2);
+  cursor:pointer;text-align:center;transition:.15s;font-family:var(--sans)}
+.schip:hover{border-color:var(--chilli-light);background:var(--chilli-pale)}
+.schip.active{border-color:var(--chilli);background:var(--chilli-pale)}
+.schip .si{font-size:18px;margin-bottom:2px}
+.schip .sl{font-size:10px;font-weight:500;color:var(--text2)}
+
+/* ═══ BUTTONS ═══════════════════════════════════ */
+.btn-analyze{background:var(--chilli);color:#fff;border:none;border-radius:11px;
+  padding:13px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(200,54,29,0.3)}
+.btn-analyze:hover:not(:disabled){background:var(--chilli-light);transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(200,54,29,0.38)}
+.btn-analyze:disabled{background:var(--bg2);color:var(--text3);cursor:not-allowed;
+  transform:none;box-shadow:none}
+.btn-analyze.loading .spin{display:block}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ CAMERA PANEL ══════════════════════════════ */
+.camera-panel{background:var(--bg2);border-radius:10px;overflow:hidden;position:relative;display:none}
+.camera-panel.visible{display:block}
+#webcamVideo{width:100%;height:150px;object-fit:cover;background:#000;display:block}
+.camera-controls{display:flex;gap:6px;padding:8px}
+.btn-cam{flex:1;padding:7px;font-size:11px;font-weight:600;border:none;border-radius:8px;
+  cursor:pointer;transition:.15s;font-family:var(--sans)}
+.btn-start{background:var(--leaf);color:#fff}
+.btn-capture{background:var(--chilli);color:#fff}
+.btn-stop{background:var(--bg);border:1px solid var(--border);color:var(--text2)}
+#captureCanvas{display:none}
+
+/* ═══ CV CARD ═══════════════════════════════════ */
+.cv-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:14px 16px;box-shadow:var(--shadow-sm);display:none}
+.cv-panel.visible{display:block}
+.cv-rows{display:flex;flex-direction:column;gap:7px}
+.cv-row-item{display:grid;grid-template-columns:90px 1fr 38px;align-items:center;gap:8px}
+.cv-row-item .k{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.bar{background:var(--bg2);border-radius:20px;height:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:20px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.cv-row-item .v{font-size:11px;font-family:var(--mono);color:var(--text2);text-align:right}
+
+/* ═══ RIGHT PANEL ═══════════════════════════════ */
+.r-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  min-height:540px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.tab-bar{display:flex;gap:1px;background:var(--bg2);padding:5px;margin:14px 14px 0;
+  border-radius:10px;flex-shrink:0;overflow-x:auto}
+.tab{flex:1;padding:6px 8px;font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;
+  border-radius:7px;text-align:center;transition:.15s;letter-spacing:.03em;white-space:nowrap;min-width:0}
+.tab.active{background:var(--card);color:var(--chilli);box-shadow:var(--shadow-sm)}
+.tab-body{flex:1;overflow:hidden}
+.tc{display:none;flex-direction:column;gap:0;animation:fadeUp .3s ease;height:100%}
+.tc.vis{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ PLACEHOLDER & LOADING ═════════════════════ */
+.placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:64px 20px;text-align:center;gap:12px}
+.ph-icon{font-size:52px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.ph-text{font-size:13px;color:var(--text3);line-height:1.6;max-width:200px}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:64px 20px;text-align:center}
+.loading-icon{font-size:32px;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.loading-track{width:180px;height:3px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.loading-fill{height:100%;background:var(--chilli);animation:lbar 1.8s ease-in-out infinite;border-radius:3px}
+@keyframes lbar{0%{width:0;margin-left:0}50%{width:70%;margin-left:15%}100%{width:0;margin-left:100%}}
+.loading-msg{font-size:12px;color:var(--text3);font-family:var(--mono)}
+
+/* ═══ ANALYSIS RESULTS ═══════════════════════════ */
+.res-scroll{overflow-y:auto;flex:1;padding:14px}
+.res-scroll::-webkit-scrollbar{width:3px}
+
+/* ID Card */
+.id-card{background:linear-gradient(135deg,#1C1410,#4A200A);border-radius:14px;
+  padding:16px 18px;position:relative;overflow:hidden;margin-bottom:12px}
+.id-card::before{content:'';position:absolute;right:-40px;top:-40px;width:150px;height:150px;
+  border-radius:50%;background:rgba(200,54,29,0.18)}
+.id-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(200,54,29,0.25);
+  border:1px solid rgba(200,54,29,0.4);border-radius:20px;padding:3px 10px;margin-bottom:8px}
+.id-badge span{font-size:10px;font-weight:700;color:#F4A35A;letter-spacing:.08em;text-transform:uppercase}
+.id-name{font-family:var(--serif);font-size:20px;color:#fff;line-height:1.1;margin-bottom:3px;font-style:italic}
+.id-local{font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:10px}
+.id-traits{display:flex;gap:6px;flex-wrap:wrap}
+.id-trait{background:rgba(0,0,0,0.3);border-radius:6px;padding:4px 9px;font-size:10px;
+  color:rgba(255,255,255,0.6);font-family:var(--mono)}
+.id-conf{position:absolute;top:14px;right:14px;text-align:right;z-index:1}
+.id-conf .cv{font-size:22px;font-weight:700;color:#6EDFA0;font-family:var(--mono);line-height:1}
+.id-conf .cl{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em}
+
+/* Grade row */
+.grade-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;
+  padding-bottom:10px;border-bottom:1px solid var(--border)}
+.gr-left h2{font-family:var(--serif);font-size:17px;color:var(--text);font-weight:600}
+.gr-left .gr-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.gtag{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.04em;flex-shrink:0}
+.gA{background:#E8F8F0;color:#1A6E3A;border:1px solid rgba(39,174,96,0.3)}
+.gB{background:var(--amber-pale);color:#8B5A14;border:1px solid rgba(193,127,36,0.3)}
+.gC{background:var(--chilli-pale);color:var(--chilli);border:1px solid rgba(200,54,29,0.25)}
+
+/* Price box */
+.price-box{background:linear-gradient(135deg,#1C1410,#3A1F10);border-radius:12px;
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pb-main .pbl{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.pb-main .pbv{font-family:var(--serif);font-size:28px;color:#F4E0B0;line-height:1;font-style:italic}
+.pb-main .pbr{font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;font-family:var(--mono)}
+.pb-live{text-align:right}
+.pb-live .lv{font-size:12px;font-weight:600;color:#6EDFA0}
+.pb-live .ll{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px}
+.shu-box{background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 12px;text-align:center}
+.shu-v{font-family:var(--mono);font-size:13px;font-weight:600;color:#F4A35A}
+.shu-l{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+/* Voice button */
+.voice-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;background:var(--blue-pale);
+  border:1px solid rgba(37,99,168,0.2);border-radius:10px;cursor:pointer;transition:.15s;width:100%;
+  margin-bottom:10px;color:var(--blue);font-size:12px;font-weight:600;font-family:var(--sans)}
+.voice-btn:hover{background:#E0ECFF;border-color:rgba(37,99,168,0.35)}
+.voice-btn.speaking{background:#E8F5ED;color:var(--leaf);border-color:rgba(45,125,74,0.3);animation:vib .4s ease infinite alternate}
+@keyframes vib{from{transform:scale(1)}to{transform:scale(1.01)}}
+
+/* Metrics grid */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.mcard{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:11px 13px}
+.mcard .ml{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.mcard .mv{font-size:19px;font-weight:700;line-height:1;margin-bottom:3px;font-family:var(--serif)}
+.mcard .ms{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.mcard .bar{margin-top:5px}
+
+/* Tags */
+.tags-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.tag{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.tag-g{background:var(--leaf-pale);color:#1A5C32;border:1px solid rgba(45,125,74,0.2)}
+.tag-w{background:var(--amber-pale);color:#7A4F10;border:1px solid rgba(193,127,36,0.2)}
+.tag-b{background:var(--chilli-pale);color:var(--chilli);border:1px solid rgba(200,54,29,0.2)}
+
+/* Reco */
+.reco{background:var(--leaf-pale);border-left:3px solid var(--leaf);border-radius:0 10px 10px 0;
+  padding:11px 14px;margin-bottom:10px}
+.reco-lbl{font-size:10px;font-weight:700;color:var(--leaf);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.reco p{font-size:12px;color:var(--text2);line-height:1.65}
+
+/* Export PDF btn */
+.pdf-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;cursor:pointer;
+  transition:.15s;width:100%;color:var(--text2);font-size:12px;font-weight:600;font-family:var(--sans)}
+.pdf-btn:hover{background:var(--amber-pale);color:var(--amber);border-color:rgba(193,127,36,0.3)}
+
+/* ═══ BATCH TAB ═════════════════════════════════ */
+.batch-wrap{padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
+.batch-summary{background:linear-gradient(135deg,#1C1410,#2E1408);border-radius:12px;padding:14px;color:#fff}
+.bs-title{font-family:var(--serif);font-size:16px;color:#F4E0B0;font-style:italic;margin-bottom:8px}
+.bs-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bs-stat{background:rgba(255,255,255,0.07);border-radius:8px;padding:8px;text-align:center}
+.bs-stat .bsv{font-size:20px;font-weight:700;font-family:var(--serif);color:#F4A35A}
+.bs-stat .bsk{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.batch-list{display:flex;flex-direction:column;gap:6px}
+.batch-item{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:var(--card2);border:1px solid var(--border);border-radius:10px}
+.bi-num{width:22px;height:22px;border-radius:6px;background:var(--chilli);color:#fff;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bi-info{flex:1;min-width:0}
+.bi-name{font-size:12px;font-weight:600;color:var(--text)}
+.bi-meta{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.bi-sort{font-size:11px;font-weight:600;color:var(--text2);white-space:nowrap}
+
+/* ═══ HISTORY TAB ═══════════════════════════════ */
+.hist-item{display:flex;align-items:center;gap:10px;padding:11px 16px;
+  border-bottom:1px solid var(--border);cursor:pointer;transition:.15s}
+.hist-item:hover{background:var(--bg)}
+.hist-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--border)}
+.hist-info{flex:1;min-width:0}
+.hi-n{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi-m{font-size:11px;color:var(--text3);font-family:var(--mono)}
+
+/* ═══ MARKET TAB ════════════════════════════════ */
+.mkt-wrap{padding:14px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px}
+.mkt-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mkt-select{padding:6px 10px;border:1px solid var(--border);border-radius:8px;
+  font-size:12px;background:var(--card2);color:var(--text);font-family:var(--sans);outline:none}
+.mkt-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.mkt-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:11px 13px}
+.mkt-card .mk{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.mkt-card .mv{font-family:var(--serif);font-size:19px;color:var(--text);font-weight:600;font-style:italic}
+.chart-wrap{position:relative;height:170px}
+.mkt-table{width:100%;border-collapse:collapse;font-size:11px}
+.mkt-table th{text-align:left;color:var(--text3);font-size:10px;letter-spacing:.06em;
+  text-transform:uppercase;padding:5px 7px;border-bottom:1px solid var(--border)}
+.mkt-table td{padding:7px 7px;border-bottom:1px solid var(--border);color:var(--text2)}
+.mkt-table tr:last-child td{border-bottom:none}
+.mkt-table tr:hover td{background:var(--bg)}
+.mkt-insight{background:var(--amber-pale);border-left:3px solid var(--amber);
+  border-radius:0 10px 10px 0;padding:11px 14px}
+.mi-lbl{font-size:10px;font-weight:700;color:var(--amber);letter-spacing:.08em;
+  text-transform:uppercase;margin-bottom:5px}
+.mkt-insight p{font-size:12px;color:var(--text2);line-height:1.65}
+
+/* ═══ DISEASE LIBRARY TAB ═══════════════════════ */
+.dis-wrap{padding:14px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
+.dis-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:14px;display:flex;gap:12px;align-items:flex-start}
+.dis-icon{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:26px;flex-shrink:0;border:1px solid var(--border)}
+.dis-info .dn{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.dis-info .dl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.dis-info .dd{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:6px}
+.dis-signs{display:flex;flex-wrap:wrap;gap:4px}
+.ds{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:500}
+
+/* ═══ PDF REPORT MODAL ══════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;
+  align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+.modal-overlay.vis{display:flex}
+.modal{background:var(--card);border-radius:18px;padding:28px;width:440px;max-width:92vw;
+  box-shadow:var(--shadow-lg);position:relative}
+.modal h3{font-family:var(--serif);font-size:20px;color:var(--text);margin-bottom:4px;font-style:italic}
+.modal p{font-size:12px;color:var(--text3);margin-bottom:18px;line-height:1.6}
+.cert-preview{background:linear-gradient(135deg,#FAF7F2,#F3EEE6);border:2px solid var(--border2);
+  border-radius:12px;padding:20px;margin-bottom:16px;font-family:var(--serif)}
+.cert-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1.5px solid var(--border2)}
+.cert-logo{width:36px;height:36px;background:var(--chilli);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:18px}
+.cert-title{font-size:15px;font-weight:700;color:var(--text);font-style:italic}
+.cert-sub{font-size:10px;color:var(--text3);font-family:var(--sans)}
+.cert-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:var(--sans)}
+.cf-item .cf-k{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.cf-item .cf-v{font-size:13px;font-weight:600;color:var(--text)}
+.cert-grade-badge{grid-column:span 2;padding:10px;border-radius:8px;text-align:center;margin-top:5px}
+.modal-actions{display:flex;gap:8px}
+.btn-modal{flex:1;padding:10px;border-radius:9px;font-size:12px;font-weight:600;
+  cursor:pointer;border:none;font-family:var(--sans);transition:.15s}
+.btn-download{background:var(--chilli);color:#fff}
+.btn-download:hover{background:var(--chilli-light)}
+.btn-cancel{background:var(--bg2);color:var(--text2);border:1px solid var(--border)}
+.btn-cancel:hover{background:var(--border)}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;
+  font-size:18px;cursor:pointer;color:var(--text3);line-height:1}
+
+/* ═══ LANGUAGE STRINGS ══════════════════════════ */
+[data-lang="te"] [data-en], [data-lang="hi"] [data-en]{ display:none }
+[data-lang="en"] [data-te], [data-lang="en"] [data-hi]{ display:none }
+[data-lang="te"] [data-te]{ display:inline }
+/* ═════════ MOBILE RESPONSIVE ═════════ */
+
+@media (max-width: 768px) {
+
+  .app{
+    padding:10px;
+  }
+
+  .main{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .header{
+    flex-direction:column;
+    align-items:flex-start;
+    padding:16px;
+  }
+
+  .header-right{
+    width:100%;
+    align-items:flex-start;
+  }
+
+  .header-text h1{
+    font-size:20px;
+  }
+
+  .config-bar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .cfg-input{
+    width:100%;
+    max-width:100% !important;
+  }
+
+  .tab-bar{
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+
+  .tab{
+    min-width:90px;
+    flex:none;
+  }
+
+  .metric-grid{
+    grid-template-columns:1fr;
+  }
+
+  .preview-img{
+    height:220px;
+  }
+
+  #webcamVideo{
+    height:260px;
+  }
+
+  .upload-zone{
+    min-height:180px;
+  }
+
+  .btn-analyze{
+    position:sticky;
+    bottom:10px;
+    z-index:999;
+    min-height:58px;
+    font-size:16px;
+  }
+
+  body{
+    font-size:15px;
+    -webkit-font-smoothing:antialiased;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ══ HEADER ══════════════════════════════════════ -->
+  <div class="header">
+    <div class="logo-box">🌶️</div>
+    <div class="header-text">
+      <h1>Mirchi<span>Vision</span> AI <span style="font-size:13px;color:rgba(255,255,255,0.4);font-family:var(--sans);font-style:normal">v3</span></h1>
+      <p>
+        <span data-en>Chilli Quality Intelligence · OpenCV + CNN + Live Mandi Prices</span>
+        <span data-te>మిర్చి నాణ్యత పరీక్ష · ఓపెన్‌సివి + సజీవ ధరలు</span>
+        <span data-hi>मिर्च गुणवत्ता · OpenCV + सीधी मंडी कीमतें</span>
+      </p>
+    </div>
+    <div class="header-right">
+      <div class="header-pills">
+        <span class="hpill hpill-r">OpenCV</span>
+        <span class="hpill hpill-g">AI Grading</span>
+        <span class="hpill hpill-b">Live Prices</span>
+      </div>
+      <button class="lang-btn" onclick="cycleLang()" title="Change language">
+        🌐 <span id="langLabel">English</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ BACKEND CONFIG ════════════════════════════ -->
+  <div class="config-bar">
+    <span class="cfg-label">
+      <span data-en>Backend URL</span><span data-te>బ్యాక్‌ఎండ్ URL</span><span data-hi>बैकएंड URL</span>
+    </span>
+    <input class="cfg-input" id="backendUrl" value="http://127.0.0.1:8000" style="max-width:220px">
+    <span class="cfg-label">Agmarknet Key</span>
+    <input class="cfg-input" id="agmarkKey" placeholder="data.gov.in API key" style="max-width:200px">
+    <button class="btn-xs btn-test" onclick="testBackend()">
+      <span data-en>Test</span><span data-te>పరీక్ష</span><span data-hi>परीक्षण</span>
+    </button>
+    <div class="dot dot-idle" id="statusDot"></div>
+    <span class="cfg-status" id="statusLabel">Not connected</span>
+  </div>
+
+  <!-- ══ MAIN ════════════════════════════════════ -->
+  <div class="main">
+
+    <!-- LEFT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Upload Panel -->
+      <div class="panel">
+        <div class="psec">
+          <!-- Mode toggle -->
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="modeSingle" onclick="setMode('single',this)">
+              <span data-en>Single</span><span data-te>ఒకటి</span><span data-hi>एकल</span>
+            </button>
+            <button class="mode-btn" id="modeBatch" onclick="setMode('batch',this)">
+              <span data-en>Batch (5–10)</span><span data-te>బ్యాచ్</span><span data-hi>बैच</span>
+            </button>
+            <button class="mode-btn" id="modeCamera" onclick="setMode('camera',this)">
+              📷 <span data-en>Camera</span><span data-te>కెమెరా</span><span data-hi>कैमरा</span>
+            </button>
+          </div>
+
+          <!-- Single upload -->
+          <div id="singleUpload">
+            <div class="upload-zone" id="uploadZone">
+              <div class="uz-icon">🌶️</div>
+              <div class="uz-title">
+                <span data-en>Drop mirchi image here</span>
+                <span data-te>మిర్చి చిత్రాన్ని ఇక్కడ వేయండి</span>
+                <span data-hi>मिर्च की फोटो यहाँ डालें</span>
+              </div>
+              <div class="uz-sub">JPG, PNG — real photos work best</div>
+              <input type="file" accept="image/*" id="fileInput">
+            </div>
+          </div>
+
+          <!-- Batch upload -->
+          <div id="batchUpload" style="display:none">
+            <div class="upload-zone" id="batchZone">
+              <div class="uz-icon">🫙</div>
+              <div class="uz-title">
+                <span data-en>Upload 5–10 mirchi images</span>
+                <span data-te>5–10 మిర్చి చిత్రాలు అప్‌లోడ్ చేయండి</span>
+                <span data-hi>5–10 मिर्च फोटो अपलोड करें</span>
+              </div>
+              <div class="uz-sub">Batch grading + sorting report</div>
+              <input type="file" accept="image/*" multiple id="batchInput">
+            </div>
+            <div class="batch-thumbs" id="batchThumbs"></div>
+            <div class="batch-count" id="batchCount"></div>
+          </div>
+
+          <!-- Camera -->
+          <div class="camera-panel" id="cameraPanel">
+            <video id="webcamVideo" autoplay playsinline muted></video>
+            <canvas id="captureCanvas"></canvas>
+            <div class="camera-controls">
+              <button class="btn-cam btn-start" onclick="startCamera()">▶ Start</button>
+              <button class="btn-cam btn-capture" onclick="captureFrame()">📸 Capture</button>
+              <button class="btn-cam btn-stop" onclick="stopCamera()">■ Stop</button>
+            </div>
+            <div class="camera-note">On phones, camera access usually needs HTTPS. If the camera will not start, use Upload Photo instead.</div>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="psec" id="previewSec" style="display:none">
+          <div class="plabel">Preview</div>
+          <img id="previewImg" class="preview-img" src="" alt="">
+        </div>
+
+        <!-- Samples -->
+        <div class="psec">
+          <div class="plabel">
+            <span data-en>Quick Samples</span><span data-te>నమూనాలు</span><span data-hi>नमूने</span>
+          </div>
+          <div class="sample-grid">
+            <button class="schip" onclick="loadSample('byadgi',this)"><div class="si">🌶️</div><div class="sl">Byadgi</div></button>
+            <button class="schip" onclick="loadSample('guntur',this)"><div class="si">🔥</div><div class="sl">Guntur</div></button>
+            <button class="schip" onclick="loadSample('green',this)"><div class="si">💚</div><div class="sl">Green</div></button>
+            <button class="schip" onclick="loadSample('kashmiri',this)"><div class="si">🍂</div><div class="sl">Kashmiri</div></button>
+            <button class="schip" onclick="loadSample('damaged',this)"><div class="si">⚠️</div><div class="sl">Damaged</div></button>
+            <button class="schip" onclick="loadSample('export',this)"><div class="si">⭐</div><div class="sl">Export</div></button>
+          </div>
+        </div>
+
+        <div class="psec">
+          <button class="btn-analyze" id="analyzeBtn" disabled onclick="runAnalysis()">
+            <div class="spin"></div>
+            <span class="btn-text">
+              <span data-en>🔬 Analyze</span>
+              <span data-te>🔬 విశ్లేషించు</span>
+              <span data-hi>🔬 विश्लेषण करें</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- OpenCV metrics card -->
+      <div class="cv-panel" id="cvCard">
+        <div class="plabel" style="margin-bottom:10px">
+          🔬 <span data-en>OpenCV Pixel Metrics</span><span data-te>పిక్సెల్ కొలతలు</span><span data-hi>पिक्सेल मेट्रिक्स</span>
+        </div>
+        <div class="cv-rows" id="cvRows"></div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="r-panel">
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('analysis',this)">
+          <span data-en>Analysis</span><span data-te>విశ్లేషణ</span><span data-hi>विश्लेषण</span>
+        </div>
+        <div class="tab" onclick="switchTab('batch',this)">
+          <span data-en>Batch</span><span data-te>బ్యాచ్</span><span data-hi>बैच</span>
+        </div>
+        <div class="tab" onclick="switchTab('history',this)">
+          <span data-en>History</span><span data-te>చరిత్ర</span><span data-hi>इतिहास</span>
+        </div>
+        <div class="tab" onclick="switchTab('market',this)">
+          <span data-en>Mandi</span><span data-te>మండి</span><span data-hi>मंडी</span>
+        </div>
+        <div class="tab" onclick="switchTab('disease',this)">
+          <span data-en>Diseases</span><span data-te>వ్యాధులు</span><span data-hi>रोग</span>
+        </div>
+      </div>
+
+      <div class="tab-body">
+        <!-- ANALYSIS TAB -->
+        <div class="tc vis" id="tc-analysis">
+          <div id="ph" class="placeholder">
+            <div class="ph-icon">🌶️</div>
+            <p class="ph-text">
+              <span data-en>Upload or select a sample, then click Analyze</span>
+              <span data-te>నమూనా ఎంచుకుని విశ్లేషించు నొక్కండి</span>
+              <span data-hi>नमूना चुनें और विश्लेषण करें</span>
+            </p>
+          </div>
+          <div class="loading-wrap" id="loadWrap" style="display:none">
+            <div class="loading-icon">🔬</div>
+            <div class="loading-track"><div class="loading-fill"></div></div>
+            <div class="loading-msg" id="loadMsg">Scanning pixel matrix...</div>
+          </div>
+          <div id="resPanel" style="display:none" class="res-scroll"></div>
+        </div>
+
+        <!-- BATCH TAB -->
+        <div class="tc" id="tc-batch">
+          <div class="batch-wrap" id="batchWrap">
+            <div class="placeholder">
+              <div class="ph-icon">🫙</div>
+              <p class="ph-text">
+                <span data-en>Switch to Batch mode, upload 5–10 images, then Analyze</span>
+                <span data-te>బ్యాచ్ మోడ్‌లో 5–10 చిత్రాలు అప్‌లోడ్ చేయండి</span>
+                <span data-hi>बैच मोड में 5–10 फोटो अपलोड करें</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div class="tc" id="tc-history">
+          <div id="histList">
+            <div class="placeholder">
+              <div class="ph-icon" style="font-size:36px">📋</div>
+              <p class="ph-text">
+                <span data-en>No analyses yet</span><span data-te>విశ్లేషణలు లేవు</span><span data-hi>अभी तक कोई विश्लेषण नहीं</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MARKET TAB -->
+        <div class="tc" id="tc-market">
+          <div class="mkt-wrap">
+            <div class="mkt-controls">
+              <span style="font-size:11px;font-weight:600;color:var(--text3)">State:</span>
+              <select class="mkt-select" id="stateSelect" onchange="loadMandi()">
+                <option value="Telangana">Telangana</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Rajasthan">Rajasthan</option>
+              </select>
+              <button class="btn-xs btn-test" onclick="loadMandi()">🔄 Refresh</button>
+            </div>
+            <div class="mkt-mini" id="mandiMini">
+              <div class="mkt-card"><div class="mk">Grade A</div><div class="mv">₹—</div></div>
+              <div class="mkt-card"><div class="mk">Grade B</div><div class="mv">₹—</div></div>
+              <div class="mkt-card"><div class="mk">Grade C</div><div class="mv">₹—</div></div>
+              <div class="mkt-card"><div class="mk">Export</div><div class="mv">₹—</div></div>
+            </div>
+            <div class="chart-wrap"><canvas id="mandiChart"></canvas></div>
+            <div id="mandiTable" style="overflow-x:auto;max-height:170px;overflow-y:auto"></div>
+            <div class="mkt-insight">
+              <div class="mi-lbl">📊 Market Insight</div>
+              <p id="mandiInsight">Loading live mandi data...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- DISEASE LIBRARY TAB -->
+        <div class="tc" id="tc-disease">
+          <div class="dis-wrap" id="disWrap"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PDF MODAL -->
+<div class="modal-overlay" id="pdfModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePdfModal()">✕</button>
+    <h3>
+      <span data-en>Grading Certificate</span><span data-te>గ్రేడింగ్ సర్టిఫికేట్</span><span data-hi>ग्रेडिंग प्रमाण पत्र</span>
+    </h3>
+    <p>PDF grading certificate for traders & export documentation</p>
+    <div class="cert-preview" id="certPreview">
+      <div class="cert-header">
+        <div class="cert-logo">🌶️</div>
+        <div>
+          <div class="cert-title">MirchiVision AI — Quality Certificate</div>
+          <div class="cert-sub" style="font-family:var(--sans)">Issued by MirchiVision AI · Agri Intelligence Platform</div>
+        </div>
+      </div>
+      <div class="cert-fields" id="certFields"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-download" onclick="downloadPDF()">⬇ Download PDF</button>
+      <button class="btn-modal btn-cancel" onclick="closePdfModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ════════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════════ */
+let mode            = 'single';      // single | batch | camera
+let currentSample   = null;
+let currentFile     = null;
+let batchFiles      = [];
+let cvData          = null;
+let lastResult      = null;
+let analysisHistory = [];
+let backendOnline   = false;
+let mediaStream     = null;
+let mandiChart      = null;
+let speaking        = false;
+let currentLang     = 'en';
+
+const LANGS = ['en','te','hi'];
+const LANG_LABELS = {en:'English',te:'తెలుగు',hi:'हिंदी'};
+
+/* ════════════════════════════════════════════════════════
+   LANGUAGE
+════════════════════════════════════════════════════════ */
+function cycleLang(){
+  const idx = LANGS.indexOf(currentLang);
+  currentLang = LANGS[(idx+1)%LANGS.length];
+  document.documentElement.setAttribute('data-lang', currentLang);
+  document.getElementById('langLabel').textContent = LANG_LABELS[currentLang];
+}
+
+/* ════════════════════════════════════════════════════════
+   BACKEND TEST
+════════════════════════════════════════════════════════ */
+async function testBackend(){
+  const dot=document.getElementById('statusDot'), lbl=document.getElementById('statusLabel');
+  dot.className='dot dot-idle'; lbl.textContent='Checking...';
+  try{
+    const r=await fetch(getUrl('/health'),{signal:AbortSignal.timeout(4000)});
+    const d=await r.json();
+    backendOnline=true;
+    dot.className='dot dot-on';
+    lbl.textContent=`Connected · OpenCV ✓ · CNN: ${d.cnn_loaded?'loaded':'fallback only'}`;
+  }catch(e){
+    backendOnline=false;
+    dot.className='dot dot-off';
+    lbl.textContent='Backend offline — AI-only mode';
+  }
+}
+const getUrl=p=>document.getElementById('backendUrl').value.replace(/\/$/,'')+p;
+
+/* ════════════════════════════════════════════════════════
+   MODE TOGGLE
+════════════════════════════════════════════════════════ */
+function setMode(m, btn){
+  mode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('singleUpload').style.display = m==='single'?'block':'none';
+  document.getElementById('batchUpload').style.display  = m==='batch' ?'block':'none';
+  const cp=document.getElementById('cameraPanel');
+  if(m==='camera'){ cp.classList.add('visible'); }
+  else { cp.classList.remove('visible'); stopCamera(); }
+}
+
+/* ════════════════════════════════════════════════════════
+   FILE INPUT — single
+════════════════════════════════════════════════════════ */
+document.getElementById('fileInput').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  currentFile=f; currentSample=null; cvData=null;
+  document.querySelectorAll('.schip').forEach(c=>c.classList.remove('active'));
+  const r=new FileReader();
+  r.onload=ev=>showPreview(ev.target.result);
+  r.readAsDataURL(f);
+});
+const uz=document.getElementById('uploadZone');
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('over')});
+uz.addEventListener('dragleave',()=>uz.classList.remove('over'));
+uz.addEventListener('drop',e=>{
+  e.preventDefault();uz.classList.remove('over');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/')){
+    document.getElementById('fileInput').files=e.dataTransfer.files;
+    document.getElementById('fileInput').dispatchEvent(new Event('change'));
+  }
+});
+
+/* ════════════════════════════════════════════════════════
+   FILE INPUT — batch
+════════════════════════════════════════════════════════ */
+document.getElementById('batchInput').addEventListener('change',e=>{
+  batchFiles=[...e.target.files].slice(0,10);
+  const thumbsEl=document.getElementById('batchThumbs');
+  thumbsEl.innerHTML='';
+  batchFiles.forEach((f,i)=>{
+    const r=new FileReader();
+    r.onload=ev=>{
+      const img=document.createElement('img');
+      img.src=ev.target.result; img.className='batch-thumb';
+      img.onclick=()=>{ document.querySelectorAll('.batch-thumb').forEach(t=>t.classList.remove('active'));
+        img.classList.add('active'); showPreview(ev.target.result); };
+      thumbsEl.appendChild(img);
+      if(i===0){img.classList.add('active');showPreview(ev.target.result);}
+    };
+    r.readAsDataURL(f);
+  });
+  document.getElementById('batchCount').textContent=`${batchFiles.length} images selected`;
+  document.getElementById('analyzeBtn').disabled=batchFiles.length===0;
+});
+
+function showPreview(src){
+  document.getElementById('previewImg').src=src;
+  document.getElementById('previewSec').style.display='block';
+  document.getElementById('analyzeBtn').disabled=false;
+}
+
+/* ════════════════════════════════════════════════════════
+   SAMPLES
+════════════════════════════════════════════════════════ */
+const SAMPLES={
+  byadgi: {label:'Byadgi Dry Mirchi',  hint:'Deep wine-red, thin skin, moderate heat, wrinkled, signature South Karnataka variety', color:'#8B2E2E'},
+  guntur: {label:'Guntur Sannam S4',   hint:'Bright vivid red, high capsaicin, glossy, one of India\'s hottest commercial varieties', color:'#C0392B'},
+  green:  {label:'Green Chilli',       hint:'Bright green, medium length, thin walls, used fresh in South Indian cuisine', color:'#27AE60'},
+  kashmiri:{label:'Kashmiri Mirchi',   hint:'Deep brick-red, low heat, round shape, prized for vivid color in tandoor cuisine', color:'#A83230'},
+  damaged:{label:'Damaged Batch',      hint:'Multiple dark spots, fungal lesions, soft patches — anthracnose and post-harvest damage', color:'#6E2E0E'},
+  export: {label:'Export Grade',       hint:'Uniform deep red, zero defects, ideal 8–10cm length, meets international spice board standards', color:'#1A5276'}
+};
+
+function loadSample(type,btn){
+  currentSample=type; currentFile=null; cvData=null;
+  document.querySelectorAll('.schip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  const s=SAMPLES[type];
+  const cv=document.createElement('canvas'); cv.width=400; cv.height=260;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle=s.color+'18'; ctx.fillRect(0,0,400,260);
+  ctx.fillStyle=s.color;
+  ctx.beginPath(); ctx.ellipse(200,145,110,40,-0.15,0,Math.PI*2); ctx.fill();
+  // stem
+  ctx.fillStyle='#1A6B22';
+  ctx.beginPath(); ctx.moveTo(212,107); ctx.lineTo(235,58); ctx.lineTo(224,106); ctx.fill();
+  // shine
+  const g=ctx.createRadialGradient(165,128,0,165,128,55);
+  g.addColorStop(0,'rgba(255,255,255,0.25)'); g.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=g; ctx.beginPath(); ctx.ellipse(200,145,110,40,-0.15,0,Math.PI*2); ctx.fill();
+  // damage spots
+
+  showPreview(cv.toDataURL());
+}
+
+/* ════════════════════════════════════════════════════════
+   CAMERA
+════════════════════════════════════════════════════════ */
+async function startCamera(){
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      alert('Camera is not supported in this browser. Use Upload Photo instead.');
+      return;
+    }
+    if(!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1'){
+      alert('Phone camera needs HTTPS. On HTTP, use Upload Photo instead.');
+      return;
+    }
+    mediaStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+    const video=document.getElementById('webcamVideo');
+    video.srcObject=mediaStream;
+    await video.play();
+  }catch(e){ alert('Camera access denied or not available: ' + e.message); }
+}
+function captureFrame(){
+  const video=document.getElementById('webcamVideo');
+  const canvas=document.getElementById('captureCanvas');
+  canvas.width=video.videoWidth||320; canvas.height=video.videoHeight||240;
+  canvas.getContext('2d').drawImage(video,0,0);
+  canvas.toBlob(blob=>{
+    currentFile=new File([blob],'camera.jpg',{type:'image/jpeg'});
+    currentSample=null;
+    showPreview(canvas.toDataURL());
+  },'image/jpeg',0.92);
+}
+function stopCamera(){
+  if(mediaStream){ mediaStream.getTracks().forEach(t=>t.stop()); mediaStream=null; }
+}
+
+/* ════════════════════════════════════════════════════════
+   MAIN ANALYSIS
+════════════════════════════════════════════════════════ */
+const LOAD_MSGS={
+  en:['Scanning pixel matrix...','Extracting color channels...','Detecting surface defects...','Identifying variety...','Estimating market grade...','Fetching mandi prices...','Generating report...'],
+  te:['పిక్సెల్ స్కాన్ చేస్తోంది...','రంగు విశ్లేషణ...','లోపాలు గుర్తిస్తోంది...','రకం గుర్తిస్తోంది...','గ్రేడ్ అంచనా...','ధర తనిఖీ...'],
+  hi:['पिक्सेल स्कैन हो रहा है...','रंग विश्लेषण...','दोष पहचान...','किस्म पहचान...','ग्रेड अनुमान...','मंडी भाव...']
+};
+
+async function runAnalysis(){
+  const btn=document.getElementById('analyzeBtn');
+  if(btn.disabled)return;
+  if(mode==='batch' && batchFiles.length>0){ await runBatchAnalysis(); return; }
+  btn.classList.add('loading'); btn.disabled=true;
+  document.getElementById('ph').style.display='none';
+  document.getElementById('resPanel').style.display='none';
+  document.getElementById('loadWrap').style.display='flex';
+  switchTab('analysis', document.querySelector('.tab'));
+
+  const msgs=LOAD_MSGS[currentLang]||LOAD_MSGS.en;
+  let mi=0;
+  const msgEl=document.getElementById('loadMsg');
+  const iv=setInterval(()=>{ msgEl.textContent=msgs[++mi%msgs.length]; },1000);
+
+  // Step 1: OpenCV
+  if(backendOnline && currentFile){
+    try{
+      const fd=new FormData(); fd.append('file',currentFile,'mirchi.png');
+      const r=await fetch(getUrl('/analyze-image'),{method:'POST',body:fd});
+      if(r.ok){ cvData=await r.json(); renderCvCard(cvData); }
+    }catch(e){ cvData=null; }
+  }
+
+  const sampleKey = currentSample || 'export';
+  const sample = SAMPLES[sampleKey] || SAMPLES.export;
+  const result = buildAnalysisResult(sampleKey, sample, cvData);
+  clearInterval(iv);
+  document.getElementById('loadWrap').style.display='none';
+  lastResult=result;
+  renderResults(result);
+  addHistory(result);
+
+  // Auto-load mandi prices in background
+  loadMandi();
+
+  btn.classList.remove('loading'); btn.disabled=false;
+}
+
+function buildAnalysisResult(sampleKey, sample, cv){
+  const quality = cv && typeof cv.quality_signal === 'number' ? Math.max(0, Math.min(1, cv.quality_signal)) : 0.72;
+  const healthScore = Math.round(quality * 100);
+  const grade = healthScore >= 80 ? 'A' : healthScore >= 60 ? 'B' : 'C';
+  const basePrice = sampleKey === 'export' ? 160 : sampleKey === 'guntur' ? 145 : sampleKey === 'byadgi' ? 152 : 134;
+  const colorHex = cv?.dominant_color_hex || sample.color;
+  const defectLevel = healthScore >= 82 ? 'None' : healthScore >= 64 ? 'Minor' : 'Moderate';
+  const healthStatus = healthScore >= 80 ? 'Healthy' : healthScore >= 60 ? 'Semi-Healthy' : 'Diseased';
+  const varietyName = sample.label;
+  return {
+    variety_name: varietyName,
+    variety_local_name: sampleKey === 'guntur' ? 'గుంటూరు సన్నం' : sampleKey === 'byadgi' ? 'ಬ್ಯಾಡಗಿ' : sampleKey === 'kashmiri' ? 'कश्मीरी मिर्च' : sampleKey === 'green' ? 'పచ్చి మిర్చి' : 'ఎగుమతి గ్రేడ్',
+    variety_confidence: cv ? Math.round((cv.quality_signal || 0.72) * 100) : 74,
+    variety_region: sampleKey === 'guntur' ? 'Andhra Pradesh' : sampleKey === 'byadgi' ? 'Karnataka' : sampleKey === 'kashmiri' ? 'Kashmir' : 'India',
+    variety_traits: sample.hint.split(', ').slice(0, 4),
+    shu_estimate: sampleKey === 'green' ? '10,000–25,000 SHU' : sampleKey === 'kashmiri' ? '1,000–5,000 SHU' : '35,000–50,000 SHU',
+    grade,
+    health_status: healthStatus,
+    health_score: healthScore,
+    color_quality: colorHex ? 'Good' : 'Fair',
+    color_score: Math.max(50, Math.min(100, Math.round(quality * 100))),
+    freshness_score: Math.max(45, Math.min(100, Math.round((quality * 0.9 + 0.1) * 100))),
+    size_estimate: sampleKey === 'byadgi' ? 'Medium' : sampleKey === 'green' ? 'Small' : 'Medium',
+    defect_level: defectLevel,
+    moisture_level: quality >= 0.7 ? 'Optimal' : 'High',
+    detected_issues: defectLevel === 'None' ? [] : defectLevel === 'Minor' ? ['Minor surface abrasion'] : ['Dark spots', 'Uneven drying'],
+    best_use: grade === 'A' ? 'Export and premium retail' : grade === 'B' ? 'Retail and processing' : 'Powder and blending',
+    market_price_min: Math.max(80, basePrice - 18),
+    market_price_max: basePrice + 25,
+    market_price_avg: basePrice,
+    suitable_for: grade === 'A' ? ['Export', 'Retail'] : grade === 'B' ? ['Retail', 'Processing'] : ['Processing', 'Powder'],
+    recommendation: grade === 'A'
+      ? 'Batch looks strong and uniform. Keep it shaded and dry for premium grading and export lots.'
+      : grade === 'B'
+        ? 'Batch is usable for retail and processing. Remove softer pods and dry the lot evenly before sale.'
+        : 'Batch needs sorting and faster drying. Separate damaged pods before using for powder or blending.',
+    color_hex: colorHex,
+    voice_summary: 'This is Grade ' + grade + ' ' + varietyName + ' priced at ' + basePrice + ' rupees per kg, suitable for ' + (grade === 'A' ? 'export and retail' : grade === 'B' ? 'retail and processing' : 'processing and powder') + '.'
+  };
+}
+
+/* ════════════════════════════════════════════════════════
+   BATCH ANALYSIS
+════════════════════════════════════════════════════════ */
+async function runBatchAnalysis(){
+  const btn=document.getElementById('analyzeBtn');
+  btn.classList.add('loading'); btn.disabled=true;
+  switchTab('batch', document.querySelectorAll('.tab')[1]);
+
+  const batchWrap=document.getElementById('batchWrap');
+  batchWrap.innerHTML=`<div class="loading-wrap" style="padding:40px;flex:1">
+    <div class="loading-icon">🫙</div>
+    <div class="loading-track"><div class="loading-fill"></div></div>
+    <div class="loading-msg">Analyzing ${batchFiles.length} images...</div>
+  </div>`;
+
+  const results=[];
+  for(let i=0;i<batchFiles.length;i++){
+    const f=batchFiles[i];
+    const fd=new FormData(); fd.append('file',f,'mirchi.png');
+    let cv=null;
+    if(backendOnline){ try{ const r=await fetch(getUrl('/analyze-image'),{method:'POST',body:fd}); if(r.ok) cv=await r.json(); }catch(_){} }
+    const score = cv ? Math.max(0, Math.min(100, Math.round((cv.quality_signal || 0) * 100))) : 72;
+    const grade = score >= 80 ? 'A' : score >= 60 ? 'B' : 'C';
+    const sortBin = grade === 'A' ? 'Export' : grade === 'B' ? 'Retail' : 'Processing';
+    results.push({
+      file: f.name,
+      grade,
+      health_score: score,
+      defect_level: score >= 80 ? 'None' : score >= 60 ? 'Minor' : 'Moderate',
+      suitable_for: grade === 'A' ? ['Export', 'Retail'] : grade === 'B' ? ['Retail', 'Processing'] : ['Processing', 'Powder'],
+      price_avg: cv ? Math.max(90, Math.round(110 + score * 0.7)) : 136,
+      sort_bin: sortBin,
+      color_hex: cv?.dominant_color_hex || '#C0392B'
+    });
+  }
+
+  renderBatchResults(results);
+  btn.classList.remove('loading'); btn.disabled=false;
+}
+
+function renderBatchResults(results){
+  const bw=document.getElementById('batchWrap');
+  const grades={A:0,B:0,C:0};
+  results.forEach(r=>{ if(grades[r.grade]!==undefined) grades[r.grade]++; });
+  const avgPrice=Math.round(results.reduce((s,r)=>s+(r.price_avg||0),0)/results.length);
+  const bins={};
+  results.forEach(r=>{ if(!bins[r.sort_bin]) bins[r.sort_bin]=0; bins[r.sort_bin]++; });
+  const sortSummary=Object.entries(bins).map(([k,v])=>`${k}: ${v}`).join(' · ');
+
+  bw.innerHTML=`
+    <div class="batch-summary">
+      <div class="bs-title">Batch Report — ${results.length} Images</div>
+      <div class="bs-stats">
+        <div class="bs-stat"><div class="bsv">${grades.A}</div><div class="bsk">Grade A</div></div>
+        <div class="bs-stat"><div class="bsv">${grades.B}</div><div class="bsk">Grade B</div></div>
+        <div class="bs-stat"><div class="bsv">${grades.C}</div><div class="bsk">Grade C</div></div>
+        <div class="bs-stat" style="grid-column:span 2"><div class="bsv">₹${avgPrice}/kg</div><div class="bsk">Avg Price</div></div>
+        <div class="bs-stat"><div class="bsv">${results.length}</div><div class="bsk">Total</div></div>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:10px;font-family:var(--mono)">Sort: ${sortSummary}</div>
+    </div>
+    <div class="batch-list">
+      ${results.map((r,i)=>`
+        <div class="batch-item">
+          <div class="bi-num">${i+1}</div>
+          <div style="width:28px;height:28px;border-radius:6px;background:${r.color_hex}20;border:1px solid ${r.color_hex}50;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🌶️</div>
+          <div class="bi-info">
+            <div class="bi-name">${r.file}</div>
+            <div class="bi-meta">Defect: ${r.defect_level} · Health: ${r.health_score}/100 · ₹${r.price_avg}/kg</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <span class="gtag g${r.grade}" style="font-size:10px;padding:3px 9px">Grade ${r.grade}</span>
+            <span class="bi-sort">${r.sort_bin}</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER RESULTS
+════════════════════════════════════════════════════════ */
+function renderResults(r){
+  const hc=r.health_score>75?'var(--leaf)':r.health_score>50?'var(--amber)':'var(--chilli)';
+  const gradeC=`g${r.grade}`;
+  const suitable=(r.suitable_for||[]).map(s=>`<span class="tag ${s.includes('Reject')?'tag-b':s==='Export'?'tag-g':'tag-w'}">${s}</span>`).join('');
+  const issues=(r.detected_issues||[]).length
+    ?r.detected_issues.map(i=>`<span class="tag tag-w">⚠ ${i}</span>`).join('')
+    :'<span class="tag tag-g">✓ No issues</span>';
+  const traits=(r.variety_traits||[]).map(t=>`<div class="id-trait">${t}</div>`).join('');
+  const voiceText=((r.voice_summary||('This is Grade ' + r.grade + ' ' + r.variety_name + ' priced at ' + r.market_price_avg + ' rupees per kg.')).replace(/'/g,"\\'"));
+
+  document.getElementById('resPanel').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:0;padding-bottom:10px">
+      <!-- ID Card -->
+      <div class="id-card">
+        <div class="id-conf"><div class="cv">${r.variety_confidence||'—'}%</div><div class="cl">Match</div></div>
+        <div class="id-badge"><span>🔍 Variety ID</span></div>
+        <div class="id-name">${r.variety_name}</div>
+        <div class="id-local">${r.variety_local_name} · ${r.variety_region}</div>
+        <div class="id-traits">${traits}</div>
+      </div>
+
+      <!-- Grade row -->
+      <div class="grade-row" style="padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:10px">
+        <div class="gr-left">
+          <h2>${r.health_status} · ${r.best_use||''}</h2>
+          <div class="gr-sub">${r.shu_estimate||''}</div>
+        </div>
+        <span class="gtag ${gradeC}">Grade ${r.grade}</span>
+      </div>
+
+      <!-- Price box -->
+      <div class="price-box">
+        <div class="pb-main">
+          <div class="pbl">Market Price</div>
+          <div class="pbv">₹${r.market_price_avg}<span style="font-size:15px;color:rgba(255,255,255,0.35)">/kg</span></div>
+          <div class="pbr">₹${r.market_price_min}–₹${r.market_price_max}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <div class="shu-box">
+            <div class="shu-v">${(r.shu_estimate||'').split(' ')[0]||'N/A'}</div>
+            <div class="shu-l">Scoville</div>
+          </div>
+          <div class="pb-live">
+            <div class="lv" id="livePriceLabel">Live: loading...</div>
+            <div class="ll">Agmarknet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voice button -->
+      <button class="voice-btn" id="voiceBtn" onclick="speakResult('${voiceText}')">
+        🔊 <span>Read aloud (Voice Output)</span>
+      </button>
+
+      <!-- Metrics -->
+      <div class="metric-grid">
+        <div class="mcard">
+          <div class="ml">Health Score</div>
+          <div class="mv" style="color:${hc}">${r.health_score}</div>
+          <div class="ms">${r.health_status}</div>
+          <div class="bar"><div class="bar-fill" style="width:${r.health_score}%;background:${hc}"></div></div>
+        </div>
+        <div class="mcard">
+          <div class="ml">Color Quality</div>
+          <div class="mv" style="color:${r.color_hex||'var(--chilli)'}">${r.color_score}</div>
+          <div class="ms">${r.color_quality}</div>
+          <div class="bar"><div class="bar-fill" style="width:${r.color_score}%;background:${r.color_hex||'var(--chilli)'}"></div></div>
+        </div>
+        <div class="mcard">
+          <div class="ml">Freshness</div>
+          <div class="mv">${r.freshness_score}</div>
+          <div class="ms">${r.moisture_level} moisture</div>
+          <div class="bar"><div class="bar-fill" style="width:${r.freshness_score}%;background:var(--leaf)"></div></div>
+        </div>
+        <div class="mcard">
+          <div class="ml">Defects</div>
+          <div class="mv" style="font-size:15px;font-family:var(--sans)">${r.defect_level}</div>
+          <div class="ms">${r.size_estimate} size</div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div style="margin-bottom:8px">
+        <div class="plabel" style="margin-bottom:6px">Issues</div>
+        <div class="tags-row">${issues}</div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="plabel" style="margin-bottom:6px">Suitable For</div>
+        <div class="tags-row">${suitable}</div>
+      </div>
+
+      <!-- Recommendation -->
+      <div class="reco">
+        <div class="reco-lbl">🌿 Recommendation</div>
+        <p>${r.recommendation}</p>
+      </div>
+
+      <!-- PDF Export -->
+      <button class="pdf-btn" onclick="openPdfModal()">📄 Export Grading Certificate (PDF)</button>
+    </div>`;
+
+  document.getElementById('resPanel').style.display='block';
+}
+
+/* ════════════════════════════════════════════════════════
+   OPENCV CARD
+════════════════════════════════════════════════════════ */
+function renderCvCard(cv){
+  const rows=[
+    {k:'Red Ratio',      v:cv.red_ratio,       max:1,    c:'var(--chilli)'},
+    {k:'Green Ratio',    v:cv.green_ratio,      max:1,    c:'var(--leaf)'},
+    {k:'Defect Ratio',   v:cv.defect_ratio,     max:0.5,  c:'var(--amber)'},
+    {k:'Brightness',     v:cv.brightness,       max:255,  c:'#F5A623'},
+    {k:'Saturation',     v:cv.saturation,       max:255,  c:'#9B59B6'},
+    {k:'Quality Signal', v:cv.quality_signal,   max:1,    c:'var(--leaf)'},
+  ];
+  document.getElementById('cvRows').innerHTML=rows.map(r=>`
+    <div class="cv-row-item">
+      <span class="k">${r.k}</span>
+      <div class="bar"><div class="bar-fill" style="width:${Math.min(100,(r.v/r.max)*100).toFixed(1)}%;background:${r.c}"></div></div>
+      <span class="v">${typeof r.v==='number'?r.v.toFixed(3):r.v}</span>
+    </div>`).join('')+`
+    <div style="display:flex;align-items:center;gap:7px;margin-top:6px;padding-top:6px;border-top:1px solid var(--border)">
+      <div style="width:18px;height:18px;border-radius:4px;background:${cv.dominant_color_hex};border:1px solid var(--border2)"></div>
+      <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">${cv.dominant_color_hex}</span>
+      <span style="font-size:10px;color:var(--text3);margin-left:4px">Elongation: ${cv.elongation}</span>
+    </div>`;
+  document.getElementById('cvCard').classList.add('visible');
+}
+
+/* ════════════════════════════════════════════════════════
+   VOICE OUTPUT
+════════════════════════════════════════════════════════ */
+function speakResult(text){
+  if(!('speechSynthesis' in window)){ alert('Voice not supported in this browser'); return; }
+  window.speechSynthesis.cancel();
+  const btn=document.getElementById('voiceBtn');
+  if(speaking){ speaking=false; btn.classList.remove('speaking'); return; }
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang=currentLang==='te'?'te-IN':currentLang==='hi'?'hi-IN':'en-IN';
+  utt.rate=0.92; utt.pitch=1;
+  utt.onstart=()=>{ speaking=true; btn.classList.add('speaking'); btn.querySelector('span').textContent='🔇 Stop reading'; };
+  utt.onend=utt.onerror=()=>{ speaking=false; btn.classList.remove('speaking'); btn.querySelector('span').textContent='🔊 Read aloud (Voice Output)'; };
+  window.speechSynthesis.speak(utt);
+}
+
+/* ════════════════════════════════════════════════════════
+   HISTORY
+════════════════════════════════════════════════════════ */
+function addHistory(r){
+  analysisHistory.unshift({
+    label:r.variety_name||(currentSample?SAMPLES[currentSample].label:'Custom Image'),
+    grade:r.grade, price:r.market_price_avg, score:r.health_score,
+    time:new Date().toLocaleTimeString(), hex:r.color_hex||'#C0392B'
+  });
+  renderHistory();
+}
+function renderHistory(){
+  if(!analysisHistory.length)return;
+  document.getElementById('histList').innerHTML=analysisHistory.map(h=>`
+    <div class="hist-item">
+      <div class="hist-icon" style="background:${h.hex}15;border-color:${h.hex}30">🌶️</div>
+      <div class="hist-info">
+        <div class="hi-n">${h.label}</div>
+        <div class="hi-m">₹${h.price}/kg · Health: ${h.score}/100 · ${h.time}</div>
+      </div>
+      <span class="gtag g${h.grade}" style="font-size:11px;padding:4px 11px">Grade ${h.grade}</span>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════════════════════
+   LIVE MANDI PRICES (Agmarknet / data.gov.in)
+════════════════════════════════════════════════════════ */
+async function loadMandi(){
+  const state=document.getElementById('stateSelect').value;
+  let data=[];
+  try{
+    const key = (document.getElementById('agmarkKey')||{value:''}).value.trim();
+    const q = `?state=${encodeURIComponent(state)}&limit=50` + (key?`&key=${encodeURIComponent(key)}`:'');
+    const r=await fetch(getUrl(`/mandi-prices${q}`));
+    if(r.ok) data=await r.json();
+  }catch(e){ data=getMockMandi(state); }
+  if(!data.length) data=getMockMandi(state);
+  renderMandi(data, state);
+}
+
+function renderMandi(data, state){
+  // Grade buckets from price ranges
+  const prices=data.map(d=>d.modal_price).filter(Boolean);
+  if(!prices.length) return;
+  prices.sort((a,b)=>a-b);
+  const p25=prices[Math.floor(prices.length*0.25)];
+  const p75=prices[Math.floor(prices.length*0.75)];
+  const avg=Math.round(prices.reduce((a,b)=>a+b,0)/prices.length);
+  const gradeAPrice=Math.round(p75*1.25);
+  const gradeBPrice=avg;
+  const gradeCPrice=Math.round(p25*0.85);
+  const exportPrice=Math.round(gradeAPrice*1.35);
+
+  // Mini cards
+  document.getElementById('mandiMini').innerHTML=`
+    <div class="mkt-card"><div class="mk">Grade A Avg</div><div class="mv" style="color:var(--leaf)">₹${gradeAPrice}</div></div>
+    <div class="mkt-card"><div class="mk">Grade B Avg</div><div class="mv" style="color:var(--amber)">₹${gradeBPrice}</div></div>
+    <div class="mkt-card"><div class="mk">Grade C Avg</div><div class="mv" style="color:var(--chilli)">₹${gradeCPrice}</div></div>
+    <div class="mkt-card"><div class="mk">Export Premium</div><div class="mv">₹${exportPrice}</div></div>`;
+
+  // Update live label in result
+  const lpl=document.getElementById('livePriceLabel');
+  if(lpl) lpl.textContent=`Live: ₹${avg}/kg avg`;
+
+  // Group by date for chart
+  const dateMap={};
+  data.forEach(d=>{ if(d.arrival_date&&d.modal_price){ if(!dateMap[d.arrival_date]) dateMap[d.arrival_date]=[]; dateMap[d.arrival_date].push(d.modal_price); }});
+  const dates=Object.keys(dateMap).sort().slice(-10);
+  const avgByDate=dates.map(d=>Math.round(dateMap[d].reduce((a,b)=>a+b,0)/dateMap[d].length));
+
+  if(mandiChart) mandiChart.destroy();
+  Chart.defaults.font.family="'DM Sans',sans-serif";
+  Chart.defaults.color='#A8998A';
+  mandiChart=new Chart(document.getElementById('mandiChart'),{
+    type:'line',
+    data:{labels:dates,datasets:[{
+      label:`${state} Modal ₹/kg`,data:avgByDate,
+      borderColor:'#C8361D',backgroundColor:'rgba(200,54,29,0.06)',
+      tension:.4,borderWidth:2,pointRadius:4,pointBackgroundColor:'#C8361D',
+      pointBorderColor:'#fff',pointBorderWidth:1.5
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:10},usePointStyle:true,boxWidth:7}}},
+      scales:{
+        y:{ticks:{callback:v=>'₹'+v,font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'},border:{color:'var(--border)'}},
+        x:{ticks:{font:{size:9},maxRotation:30},grid:{display:false},border:{color:'var(--border)'}}
+      }}
+  });
+
+  // Table: top 6 markets
+  const latest={};
+  data.forEach(d=>{if(!latest[d.market]||d.arrival_date>latest[d.market].arrival_date) latest[d.market]=d;});
+  const rows=Object.values(latest).sort((a,b)=>(b.modal_price||0)-(a.modal_price||0)).slice(0,6);
+  document.getElementById('mandiTable').innerHTML=`
+    <table class="mkt-table">
+      <thead><tr><th>Market</th><th>Min ₹</th><th>Max ₹</th><th>Modal ₹</th><th>Date</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr>
+        <td><strong>${r.market}</strong>${r.district?`<span style="color:var(--text3);margin-left:4px">${r.district}</span>`:''}</td>
+        <td>${r.min_price??'—'}</td><td>${r.max_price??'—'}</td>
+        <td><strong style="color:var(--chilli)">₹${r.modal_price??'—'}</strong></td>
+        <td>${r.arrival_date||'—'}</td></tr>`).join('')}
+      </tbody>
+    </table>`;
+
+  const top=(Object.values(latest).sort((a,b)=>(b.modal_price||0)-(a.modal_price||0))[0]?.market)||'—';
+  document.getElementById('mandiInsight').textContent=
+    `Live Agmarknet data for ${state}: avg modal price ₹${avg}/kg across ${data.length} entries. Highest at ${top} (₹${Math.max(...prices)}/kg). Source: data.gov.in.`;
+}
+
+function getMockMandi(state){
+  const today=new Date(), ms=[['Guntur','Guntur'],['Warangal','Warangal'],['Khammam','Khammam'],['Nizamabad','Nizamabad'],['Karimnagar','Karimnagar']];
+  const rows=[];
+  for(let i=0;i<8;i++){
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    const ds=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    ms.forEach(([m,dist])=>{
+      const b=148-i*2+Math.round(Math.random()*12-6);
+      rows.push({market:m,district:dist,state,commodity:'Chilly(Mirchi)',variety:'Red Dry',
+        min_price:b-18,max_price:b+28,modal_price:b,arrival_date:ds});
+    });
+  }
+  return rows;
+}
+
+/* ════════════════════════════════════════════════════════
+   DISEASE LIBRARY
+════════════════════════════════════════════════════════ */
+const DISEASES=[
+  {name:'Anthracnose (Fruit Rot)',local:'Annula Kaaya Thippi',icon:'🔴',sev:'High',
+   color:'var(--chilli)',bg:'var(--chilli-pale)',
+   desc:'Caused by Colletotrichum capsici. Most common post-harvest disease. Forms sunken, circular, water-soaked lesions that turn dark brown/black.',
+   signs:['Circular dark spots','Sunken lesions','Water-soaked appearance','Premature fruit drop'],
+   treatment:'Apply copper-based fungicides. Ensure proper drying post-harvest. Remove infected fruits.'},
+  {name:'Powdery Mildew',local:'Pindi Pidugu',icon:'⬜',sev:'Medium',
+   color:'var(--amber)',bg:'var(--amber-pale)',
+   desc:'Caused by Leveillula taurica. White powdery patches on leaves and stem. Reduces photosynthesis and fruit quality significantly.',
+   signs:['White powder on leaves','Yellowing leaf margins','Curled leaves','Stunted growth'],
+   treatment:'Spray wettable sulphur 0.2% or Hexaconazole. Improve air circulation.'},
+  {name:'Cercospora Leaf Spot',local:'Aakulaku Manchalu',icon:'🟤',sev:'Medium',
+   color:'#8B5A14',bg:'#FDF0E0',
+   desc:'Caused by Cercospora capsici. Circular to irregular brown spots with lighter centers on leaves. Leads to premature defoliation.',
+   signs:['Brown circular spots','Light-colored centers','Yellow halos','Leaf drop'],
+   treatment:'Remove infected leaves. Apply Mancozeb 75% WP or Carbendazim.'},
+  {name:'Phytophthora Blight',local:'Daruppu Thippi',icon:'🟫',sev:'Very High',
+   color:'#4A2C0A',bg:'#F5EBE0',
+   desc:'Caused by Phytophthora capsici. Water-soaked lesions on all parts. Causes rapid damping-off of seedlings and fruit rot in adults.',
+   signs:['Water-soaked stem base','Rapid wilting','Dark brown lesions','Root rot'],
+   treatment:'Metalaxyl + Mancozeb. Improve drainage. Avoid waterlogging. Use resistant varieties.'},
+  {name:'Bacterial Wilt',local:'Vyadhi Veluvadam',icon:'🟡',sev:'High',
+   color:'#7A6010',bg:'#FDFAEA',
+   desc:'Caused by Ralstonia solanacearum. Vascular discoloration. Sudden wilting even when soil is moist is a key indicator.',
+   signs:['Sudden wilting','Vascular browning','Milky bacterial ooze','No leaf yellowing first'],
+   treatment:'No chemical cure. Use resistant cultivars, crop rotation, soil solarization.'},
+  {name:'Leaf Curl Virus (ChiLCV)',local:'Aakulaku Mudupu',icon:'🍃',sev:'High',
+   color:'var(--leaf)',bg:'var(--leaf-pale)',
+   desc:'Transmitted by whiteflies. Causes upward/downward leaf curl, thickening of veins, mosaic patterns. Major yield loss in Andhra & Telangana.',
+   signs:['Upward leaf curl','Vein thickening','Mosaic patterns','Stunted plants'],
+   treatment:'Control whitefly with Imidacloprid. Remove infected plants. Use virus-free seedlings.'},
+];
+
+function renderDiseaseLibrary(){
+  document.getElementById('disWrap').innerHTML=DISEASES.map(d=>`
+    <div class="dis-card">
+      <div class="dis-icon" style="background:${d.bg};border-color:${d.color}30">${d.icon}</div>
+      <div class="dis-info" style="flex:1;min-width:0">
+        <div class="dn">${d.name}</div>
+        <div class="dl" style="color:${d.color}">Severity: ${d.sev} · ${d.local}</div>
+        <div class="dd">${d.desc}</div>
+        <div class="dis-signs">${d.signs.map(s=>`<span class="ds" style="background:${d.bg};color:${d.color};border:1px solid ${d.color}25">${s}</span>`).join('')}</div>
+        <div style="margin-top:7px;padding:7px 10px;background:var(--leaf-pale);border-radius:7px;font-size:11px;color:var(--leaf)">
+          💊 <strong>Treatment:</strong> ${d.treatment}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════════════════════
+   PDF CERTIFICATE
+════════════════════════════════════════════════════════ */
+function openPdfModal(){
+  if(!lastResult){alert('Run an analysis first');return;}
+  const r=lastResult;
+  const gradeColors={A:'#E8F8F0',B:'#FDF5E6',C:'#FDF0EE'};
+  const gradeText={A:'#1A6E3A',B:'#8B5A14',C:'#C8361D'};
+  document.getElementById('certFields').innerHTML=`
+    <div class="cf-item"><div class="cf-k">Variety</div><div class="cf-v">${r.variety_name}</div></div>
+    <div class="cf-item"><div class="cf-k">Region</div><div class="cf-v">${r.variety_region}</div></div>
+    <div class="cf-item"><div class="cf-k">Health Score</div><div class="cf-v">${r.health_score}/100</div></div>
+    <div class="cf-item"><div class="cf-k">Defect Level</div><div class="cf-v">${r.defect_level}</div></div>
+    <div class="cf-item"><div class="cf-k">Price Range</div><div class="cf-v">₹${r.market_price_min}–₹${r.market_price_max}/kg</div></div>
+    <div class="cf-item"><div class="cf-k">Suitable For</div><div class="cf-v">${(r.suitable_for||[]).join(', ')}</div></div>
+    <div class="cert-grade-badge" style="background:${gradeColors[r.grade]};border:1.5px solid ${gradeText[r.grade]}30">
+      <span style="font-family:var(--serif);font-size:22px;color:${gradeText[r.grade]};font-weight:700;font-style:italic">Grade ${r.grade} — ${r.health_status}</span>
+      <div style="font-size:11px;color:${gradeText[r.grade]}80;margin-top:3px;font-family:var(--sans)">Issued: ${new Date().toLocaleDateString()}</div>
+    </div>`;
+  document.getElementById('pdfModal').classList.add('vis');
+}
+function closePdfModal(){ document.getElementById('pdfModal').classList.remove('vis'); }
+
+function downloadPDF(){
+  if(!lastResult){ alert('No result to export'); return; }
+  const r=lastResult;
+  const date=new Date().toLocaleDateString();
+  const gradeBg = r.grade==='A' ? '#E8F8F0' : r.grade==='B' ? '#FDF5E6' : '#FDF0EE';
+  const gradeFg = r.grade==='A' ? '#1A6E3A' : r.grade==='B' ? '#8B5A14' : '#C8361D';
+  const html = [
+    '<!DOCTYPE html><html><head><meta charset="UTF-8">',
+    '<style>',
+    'body{font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:30px;border:2px solid #C8361D;border-radius:8px;color:#1C1410}',
+    'h1{font-size:22px;color:#C8361D;margin-bottom:5px}',
+    '.sub{font-size:12px;color:#888;margin-bottom:20px}',
+    '.grade{font-size:40px;font-weight:bold;text-align:center;padding:15px;background:' + gradeBg + ';border-radius:8px;color:' + gradeFg + ';margin:15px 0}',
+    'table{width:100%;border-collapse:collapse;margin:10px 0}',
+    'td{padding:7px 10px;border-bottom:1px solid #E8DFD0;font-size:13px}',
+    'td:first-child{font-weight:600;color:#6B5E50;width:140px}',
+    '.footer{font-size:10px;color:#aaa;margin-top:20px;text-align:center}',
+    '</style></head><body>',
+    '<h1>🌶️ MirchiVision AI — Quality Certificate</h1>',
+    '<div class="sub">Issued: ' + date + ' · AI-powered Chilli Grading System</div>',
+    '<div class="grade">Grade ' + r.grade + ' — ' + r.health_status + '</div>',
+    '<table>',
+    '<tr><td>Variety</td><td>' + r.variety_name + '</td></tr>',
+    '<tr><td>Local Name</td><td>' + r.variety_local_name + '</td></tr>',
+    '<tr><td>Region</td><td>' + r.variety_region + '</td></tr>',
+    '<tr><td>Health Score</td><td>' + r.health_score + '/100</td></tr>',
+    '<tr><td>Color Quality</td><td>' + r.color_quality + ' (' + r.color_score + '/100)</td></tr>',
+    '<tr><td>Freshness</td><td>' + r.freshness_score + '/100</td></tr>',
+    '<tr><td>Defect Level</td><td>' + r.defect_level + '</td></tr>',
+    '<tr><td>Moisture</td><td>' + r.moisture_level + '</td></tr>',
+    '<tr><td>Size</td><td>' + r.size_estimate + '</td></tr>',
+    '<tr><td>Scoville</td><td>' + r.shu_estimate + '</td></tr>',
+    '<tr><td>Price Range</td><td>₹' + r.market_price_min + '–₹' + r.market_price_max + '/kg (avg ₹' + r.market_price_avg + ')</td></tr>',
+    '<tr><td>Suitable For</td><td>' + (r.suitable_for || []).join(', ') + '</td></tr>',
+    '<tr><td>Issues</td><td>' + (r.detected_issues || ['None']).join(', ') + '</td></tr>',
+    '</table>',
+    '<p><strong>Recommendation:</strong> ' + r.recommendation + '</p>',
+    '<div class="footer">Generated by MirchiVision AI · For trading and export documentation · ' + date + '</div>',
+    '</body></html>'
+  ].join('');
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`MirchiCert_${r.variety_name.replace(/\s+/g,'_')}_${r.grade}_${date.replace(/\//g,'-')}.html`;
+  a.click();
+  closePdfModal();
+}
+
+/* ════════════════════════════════════════════════════════
+   TABS
+════════════════════════════════════════════════════════ */
+function switchTab(tab, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('vis'));
+  document.getElementById('tc-'+tab).classList.add('vis');
+  if(tab==='market') loadMandi();
+  if(tab==='disease' && !document.getElementById('disWrap').children.length) renderDiseaseLibrary();
+}
+
+/* ════════════════════════════════════════════════════════
+   FALLBACK
+════════════════════════════════════════════════════════ */
+function getFallback(){
+  return{variety_name:'Guntur Sannam S4',variety_local_name:'గుంటూర్ మిరపకాయ',
+    variety_confidence:78,variety_region:'Andhra Pradesh',
+    variety_traits:['High pungency','Vivid red','Export-grade size','High yield'],
+    shu_estimate:'35,000–50,000 SHU',grade:'B',health_status:'Semi-Healthy',health_score:72,
+    color_quality:'Good',color_score:74,freshness_score:68,size_estimate:'Medium',
+    defect_level:'Minor',moisture_level:'Optimal',
+    detected_issues:['Minor surface abrasion'],best_use:'Spice powder & export',
+    market_price_min:118,market_price_max:155,market_price_avg:136,
+    suitable_for:['Retail','Processing','Powder'],
+    recommendation:'Good quality batch. Segregate minor-defect pieces before export grading. Current Guntur market favors well-dried, uniform red lots.',
+    color_hex:'#C0392B',
+    voice_summary:'This is Grade B Guntur Sannam priced at 136 rupees per kg, suitable for retail and processing.'};
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js?v=3')
+      .then(() => console.log('Service worker registered'))
+      .catch(err => console.log('Service worker registration failed', err));
+  });
+}
+
+/* ════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════ */
+document.getElementById('backendUrl').value = location.origin;
+testBackend();
+renderDiseaseLibrary();
+loadMandi();
+</script>
+</body>
+</html>

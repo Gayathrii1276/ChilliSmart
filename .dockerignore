@@ -1,0 +1,15 @@
+venv
+__pycache__
+.git
+.github
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.h5
+*.zip
+*.tar.gz
+node_modules
+dist
+build
