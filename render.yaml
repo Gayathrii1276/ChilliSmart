@@ -10,17 +10,4 @@ services:
       - key: AGMARKNET_KEY
         sync: false
       - key: AGROMARKET_API_URL
-        sync: falseservices:
-  - type: web
-    name: mirchivision
-    env: docker
-    plan: free
-    repo: https://github.com/Gayathrii1276/ChilliSmart
-    branch: main
-    autoDeploy: true
-    startCommand: gunicorn -k uvicorn.workers.UvicornWorker app:app -b 0.0.0.0:$PORT
-    buildCommand: ""
-    disk: 1GB
-    envVars:
-      - key: PORT
-        value: 8000
+        sync: false
