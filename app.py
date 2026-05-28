@@ -132,8 +132,19 @@ async def analyze_image(file: UploadFile = File(...)):
     rgb_max = max(mean_rgb)
     rgb_min = min(mean_rgb)
     saturation = float(0 if rgb_max <= 0 else ((rgb_max - rgb_min) / rgb_max) * 255.0)
-    sharpness_signal = 0.0 if lap_var is None else min(1.0, lap_var / 2000.0)
-    quality_signal = max(0.0, min(1.0, (brightness / 255.0) * 0.45 + (1.0 - dark_ratio) * 0.35 + sharpness_signal * 0.2))
+    brightness_norm = max(0.0, min(1.0, brightness / 255.0))
+    sharpness_signal = 0.0 if lap_var is None else max(0.0, min(1.0, lap_var / 1500.0))
+    defect_penalty = max(0.0, min(1.0, dark_ratio * 1.25 + defect_ratio * 0.35))
+    saturation_norm = max(0.0, min(1.0, saturation / 255.0))
+    balance_signal = 1.0 - abs(red_ratio - green_ratio)
+    quality_raw = (
+        brightness_norm * 0.24 +
+        sharpness_signal * 0.20 +
+        saturation_norm * 0.18 +
+        balance_signal * 0.18 +
+        (1.0 - defect_penalty) * 0.20
+    )
+    quality_signal = max(0.0, min(1.0, 0.12 + quality_raw))
     dominant_color_hex = "#%02X%02X%02X" % tuple(max(0, min(255, int(round(v)))) for v in mean_rgb)
     elongation = float(max(w, h) / max(1, min(w, h)))
 
