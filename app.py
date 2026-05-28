@@ -107,6 +107,10 @@ async def analyze_image(file: UploadFile = File(...)):
     # basic color stats
     mean_bgr = img.mean(axis=(0, 1)).tolist()  # B, G, R
     mean_rgb = mean_bgr[::-1]
+    total_rgb = sum(mean_rgb) or 1.0
+    red_ratio = float(mean_rgb[0] / total_rgb)
+    green_ratio = float(mean_rgb[1] / total_rgb)
+    defect_ratio = 0.0
 
     # brightness (luma approximation)
     brightness = (0.2126 * mean_rgb[0] + 0.7152 * mean_rgb[1] + 0.0722 * mean_rgb[2])
@@ -123,6 +127,15 @@ async def analyze_image(file: UploadFile = File(...)):
     # simple defect proxy: percent of very dark pixels
     gray_simple = np.dot(img[..., ::-1], [0.2126, 0.7152, 0.0722])
     dark_ratio = float((gray_simple < 30).sum() / (h * w))
+    defect_ratio = dark_ratio
+
+    rgb_max = max(mean_rgb)
+    rgb_min = min(mean_rgb)
+    saturation = float(0 if rgb_max <= 0 else ((rgb_max - rgb_min) / rgb_max) * 255.0)
+    sharpness_signal = 0.0 if lap_var is None else min(1.0, lap_var / 2000.0)
+    quality_signal = max(0.0, min(1.0, (brightness / 255.0) * 0.45 + (1.0 - dark_ratio) * 0.35 + sharpness_signal * 0.2))
+    dominant_color_hex = "#%02X%02X%02X" % tuple(max(0, min(255, int(round(v)))) for v in mean_rgb)
+    elongation = float(max(w, h) / max(1, min(w, h)))
 
     result = {
         "width": int(w),
@@ -131,6 +144,13 @@ async def analyze_image(file: UploadFile = File(...)):
         "brightness": float(brightness),
         "laplacian_variance": lap_var,
         "dark_ratio": dark_ratio,
+        "red_ratio": red_ratio,
+        "green_ratio": green_ratio,
+        "defect_ratio": defect_ratio,
+        "saturation": saturation,
+        "quality_signal": quality_signal,
+        "dominant_color_hex": dominant_color_hex,
+        "elongation": elongation,
         "model_available": bool(_load_cnn_if_needed()),
     }
 
