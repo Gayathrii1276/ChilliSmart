@@ -981,7 +981,16 @@ async function runAnalysis(){
 }
 
 function buildAnalysisResult(sampleKey, sample, cv){
-  const quality = cv && typeof cv.quality_signal === 'number' ? Math.max(0, Math.min(1, cv.quality_signal)) : 0.72;
+  const brightness = cv && typeof cv.brightness === 'number' ? Math.max(0, Math.min(1, cv.brightness / 255)) : 0.68;
+  const saturation = cv && typeof cv.saturation === 'number' ? Math.max(0, Math.min(1, cv.saturation / 255)) : 0.55;
+  const sharpness = cv && typeof cv.laplacian_variance === 'number' ? Math.max(0, Math.min(1, cv.laplacian_variance / 1500)) : 0.5;
+  const defect = cv && typeof cv.defect_ratio === 'number' ? Math.max(0, Math.min(1, cv.defect_ratio)) : 0.15;
+  const balance = cv && typeof cv.red_ratio === 'number' && typeof cv.green_ratio === 'number'
+    ? Math.max(0, Math.min(1, 1 - Math.abs(cv.red_ratio - cv.green_ratio)))
+    : 0.68;
+  const quality = cv && typeof cv.quality_signal === 'number'
+    ? Math.max(0, Math.min(1, cv.quality_signal))
+    : Math.max(0, Math.min(1, 0.12 + (brightness * 0.24 + saturation * 0.18 + sharpness * 0.20 + balance * 0.18 + (1 - defect) * 0.20)));
   const healthScore = Math.round(quality * 100);
   const grade = healthScore >= 80 ? 'A' : healthScore >= 60 ? 'B' : 'C';
   const basePrice = sampleKey === 'export' ? 160 : sampleKey === 'guntur' ? 145 : sampleKey === 'byadgi' ? 152 : 134;
@@ -992,7 +1001,7 @@ function buildAnalysisResult(sampleKey, sample, cv){
   return {
     variety_name: varietyName,
     variety_local_name: sampleKey === 'guntur' ? 'గుంటూరు సన్నం' : sampleKey === 'byadgi' ? 'ಬ್ಯಾಡಗಿ' : sampleKey === 'kashmiri' ? 'कश्मीरी मिर्च' : sampleKey === 'green' ? 'పచ్చి మిర్చి' : 'ఎగుమతి గ్రేడ్',
-    variety_confidence: cv ? Math.round((cv.quality_signal || 0.72) * 100) : 74,
+    variety_confidence: cv ? Math.round(quality * 100) : 74,
     variety_region: sampleKey === 'guntur' ? 'Andhra Pradesh' : sampleKey === 'byadgi' ? 'Karnataka' : sampleKey === 'kashmiri' ? 'Kashmir' : 'India',
     variety_traits: sample.hint.split(', ').slice(0, 4),
     shu_estimate: sampleKey === 'green' ? '10,000–25,000 SHU' : sampleKey === 'kashmiri' ? '1,000–5,000 SHU' : '35,000–50,000 SHU',
@@ -1000,11 +1009,11 @@ function buildAnalysisResult(sampleKey, sample, cv){
     health_status: healthStatus,
     health_score: healthScore,
     color_quality: colorHex ? 'Good' : 'Fair',
-    color_score: Math.max(50, Math.min(100, Math.round(quality * 100))),
-    freshness_score: Math.max(45, Math.min(100, Math.round((quality * 0.9 + 0.1) * 100))),
+    color_score: Math.max(50, Math.min(100, Math.round((quality * 0.75 + saturation * 0.25) * 100))),
+    freshness_score: Math.max(45, Math.min(100, Math.round((quality * 0.82 + brightness * 0.18) * 100))),
     size_estimate: sampleKey === 'byadgi' ? 'Medium' : sampleKey === 'green' ? 'Small' : 'Medium',
     defect_level: defectLevel,
-    moisture_level: quality >= 0.7 ? 'Optimal' : 'High',
+    moisture_level: defect <= 0.28 ? 'Optimal' : 'High',
     detected_issues: defectLevel === 'None' ? [] : defectLevel === 'Minor' ? ['Minor surface abrasion'] : ['Dark spots', 'Uneven drying'],
     best_use: grade === 'A' ? 'Export and premium retail' : grade === 'B' ? 'Retail and processing' : 'Powder and blending',
     market_price_min: Math.max(80, basePrice - 18),
@@ -1042,7 +1051,17 @@ async function runBatchAnalysis(){
     const fd=new FormData(); fd.append('file',f,'mirchi.png');
     let cv=null;
     if(backendOnline){ try{ const r=await fetch(getUrl('/analyze-image'),{method:'POST',body:fd}); if(r.ok) cv=await r.json(); }catch(_){} }
-    const score = cv ? Math.max(0, Math.min(100, Math.round((cv.quality_signal || 0) * 100))) : 72;
+    const brightness = cv && typeof cv.brightness === 'number' ? Math.max(0, Math.min(1, cv.brightness / 255)) : 0.68;
+    const saturation = cv && typeof cv.saturation === 'number' ? Math.max(0, Math.min(1, cv.saturation / 255)) : 0.55;
+    const sharpness = cv && typeof cv.laplacian_variance === 'number' ? Math.max(0, Math.min(1, cv.laplacian_variance / 1500)) : 0.5;
+    const defect = cv && typeof cv.defect_ratio === 'number' ? Math.max(0, Math.min(1, cv.defect_ratio)) : 0.15;
+    const balance = cv && typeof cv.red_ratio === 'number' && typeof cv.green_ratio === 'number'
+      ? Math.max(0, Math.min(1, 1 - Math.abs(cv.red_ratio - cv.green_ratio)))
+      : 0.68;
+    const quality = cv && typeof cv.quality_signal === 'number'
+      ? Math.max(0, Math.min(1, cv.quality_signal))
+      : Math.max(0, Math.min(1, 0.12 + (brightness * 0.24 + saturation * 0.18 + sharpness * 0.20 + balance * 0.18 + (1 - defect) * 0.20)));
+    const score = Math.max(0, Math.min(100, Math.round(quality * 100)));
     const grade = score >= 80 ? 'A' : score >= 60 ? 'B' : 'C';
     const sortBin = grade === 'A' ? 'Export' : grade === 'B' ? 'Retail' : 'Processing';
     results.push({
