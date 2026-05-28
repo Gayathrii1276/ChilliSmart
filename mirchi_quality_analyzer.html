@@ -762,6 +762,7 @@ let backendOnline   = false;
 let mediaStream     = null;
 let mandiChart      = null;
 let speaking        = false;
+let activeUtterance = null;
 let currentLang     = 'en';
 
 const LANGS = ['en','te','hi'];
@@ -1209,13 +1210,15 @@ function renderResults(r){
    OPENCV CARD
 ════════════════════════════════════════════════════════ */
 function renderCvCard(cv){
+  const safeNumber = v => typeof v === 'number' && Number.isFinite(v) ? v : 0;
+  const safeText = (v, fallback) => (v === undefined || v === null || v === '' ? fallback : v);
   const rows=[
-    {k:'Red Ratio',      v:cv.red_ratio,       max:1,    c:'var(--chilli)'},
-    {k:'Green Ratio',    v:cv.green_ratio,      max:1,    c:'var(--leaf)'},
-    {k:'Defect Ratio',   v:cv.defect_ratio,     max:0.5,  c:'var(--amber)'},
-    {k:'Brightness',     v:cv.brightness,       max:255,  c:'#F5A623'},
-    {k:'Saturation',     v:cv.saturation,       max:255,  c:'#9B59B6'},
-    {k:'Quality Signal', v:cv.quality_signal,   max:1,    c:'var(--leaf)'},
+    {k:'Red Ratio',      v:safeNumber(cv.red_ratio),       max:1,    c:'var(--chilli)'},
+    {k:'Green Ratio',    v:safeNumber(cv.green_ratio),     max:1,    c:'var(--leaf)'},
+    {k:'Defect Ratio',   v:safeNumber(cv.defect_ratio),    max:0.5,  c:'var(--amber)'},
+    {k:'Brightness',     v:safeNumber(cv.brightness),      max:255,  c:'#F5A623'},
+    {k:'Saturation',     v:safeNumber(cv.saturation),      max:255,  c:'#9B59B6'},
+    {k:'Quality Signal', v:safeNumber(cv.quality_signal),  max:1,    c:'var(--leaf)'},
   ];
   document.getElementById('cvRows').innerHTML=rows.map(r=>`
     <div class="cv-row-item">
@@ -1224,9 +1227,9 @@ function renderCvCard(cv){
       <span class="v">${typeof r.v==='number'?r.v.toFixed(3):r.v}</span>
     </div>`).join('')+`
     <div style="display:flex;align-items:center;gap:7px;margin-top:6px;padding-top:6px;border-top:1px solid var(--border)">
-      <div style="width:18px;height:18px;border-radius:4px;background:${cv.dominant_color_hex};border:1px solid var(--border2)"></div>
-      <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">${cv.dominant_color_hex}</span>
-      <span style="font-size:10px;color:var(--text3);margin-left:4px">Elongation: ${cv.elongation}</span>
+      <div style="width:18px;height:18px;border-radius:4px;background:${safeText(cv.dominant_color_hex, '#C0392B')};border:1px solid var(--border2)"></div>
+      <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">${safeText(cv.dominant_color_hex, '#C0392B')}</span>
+      <span style="font-size:10px;color:var(--text3);margin-left:4px">Elongation: ${safeText(cv.elongation, '—')}</span>
     </div>`;
   document.getElementById('cvCard').classList.add('visible');
 }
@@ -1234,17 +1237,38 @@ function renderCvCard(cv){
 /* ════════════════════════════════════════════════════════
    VOICE OUTPUT
 ════════════════════════════════════════════════════════ */
+function resetVoiceButton(){
+  const btn=document.getElementById('voiceBtn');
+  if(!btn) return;
+  speaking=false;
+  activeUtterance=null;
+  btn.classList.remove('speaking');
+  const label=btn.querySelector('span');
+  if(label) label.textContent='Read aloud (Voice Output)';
+}
+
+function stopVoiceOutput(){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  resetVoiceButton();
+}
+
 function speakResult(text){
   if(!('speechSynthesis' in window)){ alert('Voice not supported in this browser'); return; }
-  window.speechSynthesis.cancel();
   const btn=document.getElementById('voiceBtn');
-  if(speaking){ speaking=false; btn.classList.remove('speaking'); return; }
+  const synth=window.speechSynthesis;
+  if(speaking || synth.speaking || synth.pending){
+    stopVoiceOutput();
+    return;
+  }
   const utt=new SpeechSynthesisUtterance(text);
+  activeUtterance=utt;
   utt.lang=currentLang==='te'?'te-IN':currentLang==='hi'?'hi-IN':'en-IN';
   utt.rate=0.92; utt.pitch=1;
-  utt.onstart=()=>{ speaking=true; btn.classList.add('speaking'); btn.querySelector('span').textContent='🔇 Stop reading'; };
-  utt.onend=utt.onerror=()=>{ speaking=false; btn.classList.remove('speaking'); btn.querySelector('span').textContent='🔊 Read aloud (Voice Output)'; };
-  window.speechSynthesis.speak(utt);
+  utt.onstart=()=>{ speaking=true; btn.classList.add('speaking'); const label=btn.querySelector('span'); if(label) label.textContent='🔇 Stop reading'; };
+  utt.onend=utt.onerror=()=>{ resetVoiceButton(); };
+  synth.cancel();
+  synth.speak(utt);
 }
 
 /* ════════════════════════════════════════════════════════
